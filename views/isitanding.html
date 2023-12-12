@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../public/styles/style.css" />
+        <title>TURNAMENT FUTSAL</title>
+    </head>
+
+    <body>
+        <h1 style="padding-top: 100px">Booking Pertandingan</h1>
+        <main>
+            <form
+                action="http://localhost:5000/api/users/booking"
+                method="post"
+            >
+                <!-- Menambahkan input untuk menyimpan ID tim -->
+                <label for="tim">NAMA TIM</label>
+                <input type="text" id="tim" name="tim" required />
+                <label for="noHp">NO HP</label>
+                <input type="number" id="noHp" name="noHp" required />
+
+                <!-- Adding the name_tim input field -->
+                <div id="enemyTim">
+                    <h2>Enemy Tim</h2>
+                    <div id="name_tim" style="text-align: center"></div>
+                </div>
+
+                <div class="button-container">
+                    <button class="button" type="button">LANJUT TANDING</button>
+                </div>
+            </form>
+        </main>
+
+        <script>
+            let enemyTim = "";
+            function getQueryParam(param) {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                return urlParams.get(param);
+            }
+
+            // Example usage
+            const idFromURL = getQueryParam("id");
+            console.log("ID from URL:", idFromURL);
+
+            // Function to fetch details of a specific team
+            async function fetchTeamDetails(teamId) {
+                try {
+                    let tim_name = "";
+                    const response = await fetch(
+                        `http://localhost:5000/api/tim/${teamId}`
+                    );
+                    if (!response.ok) {
+                        throw new Error(
+                            `Error: ${response.status} - ${response.statusText}`
+                        );
+                    }
+                    const data = await response.json();
+
+                    console.log("Fetched team details:", data.data);
+
+                    // Assign the value to the global variable
+                    enemyTim = data.data.tim;
+
+                    console.log("Enemy Tim:", enemyTim);
+
+                    // Update the content of the "name_tim" div
+                    document.getElementById(
+                        "name_tim"
+                    ).textContent = `${enemyTim}`;
+
+                    // console.log("Enemy Tim:", data.data.tim);
+
+                    // tim_name = data.data.tim; // Extract the 'data' property from the response
+                    // return tim_name;
+                    return data.data;
+                } catch (error) {
+                    console.error(error);
+                    return null;
+                }
+            }
+
+            // Call the function and await the result
+            (async () => {
+                await fetchTeamDetails(idFromURL);
+
+                // Now you can use the global variable 'name_tim'
+                console.log("Name Tim (global variable):", enemyTim);
+            })();
+
+            document
+                .querySelector("button")
+                .addEventListener("click", async function (event) {
+                    const formData = {
+                        tim: document.getElementById("tim").value,
+                        noHp: document.getElementById("noHp").value,
+                        idTim: idFromURL,
+                    };
+                    const response = await fetch(
+                        "http://localhost:5000/api/users/booking",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(formData),
+                        }
+                    );
+                    const result = await response.json();
+
+                    const bookId = result.data_booking._id;
+
+                    function handleLanjutTandingButtonClick(bookId) {
+                        const bookUrl = `selesai2.html?id=${bookId}`;
+                        window.location.href = bookUrl;
+                    }
+
+                    if (response.ok) {
+                        // Success popup
+                        window.alert("Booking created successfully!");
+                        handleLanjutTandingButtonClick(bookId);
+                    } else {
+                        // Error popup
+                        window.alert(`Silahkan Isi Semua Form!`);
+                    }
+                });
+        </script>
+
+        <footer style="margin-top: 180px">
+            <p>Copyright 2023</p>
+        </footer>
+
+        <script></script>
+    </body>
+</html>
+
+<!-- <script>
+                document
+                    .querySelector("button")
+                    .addEventListener("click", async function (event) {
+                        const formData = {
+                            tim: document.getElementById("tim").value,
+                            noHp: document.getElementById("noHp").value,
+                        };
+                        const response = await fetch(
+                            "http://localhost:5000/api/users/booking",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(formData),
+                            }
+                        );
+
+                        // Retrieve team ID from url parameters
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            // Success popup
+                            window.alert("Booking created successfully!");
+                            // Redirect to selamat.html
+                            window.location.href = "selesai.html";
+                        } else {
+                            // Error popup
+                            window.alert(`Silahkan Isi Semua Form!`);
+                        }
+                    });
+            </script> -->

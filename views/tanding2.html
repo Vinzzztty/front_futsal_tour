@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../public/styles/style.css" />
+        <title>TURNAMENT FUTSAL</title>
+    </head>
+
+    <body>
+        <h1 style="padding-top: 50px">TIM DETAIL</h1>
+        <main id="teamDetailsContainer">
+            <!-- Team details will be dynamically added here -->
+        </main>
+
+        <div class="button-container">
+            <button
+                id="tandingButton"
+                class="button"
+                type="button"
+                style="margin-bottom: 200px"
+            >
+                BOOK TANDING
+            </button>
+        </div>
+        <footer>
+            <p>Copyright 2023</p>
+        </footer>
+
+        <script>
+            // Function to fetch details of a specific team
+            async function fetchTeamDetails(teamId) {
+                try {
+                    const response = await fetch(
+                        `http://localhost:5000/api/tim/${teamId}`
+                    );
+                    if (!response.ok) {
+                        throw new Error(
+                            `Error: ${response.status} - ${response.statusText}`
+                        );
+                    }
+                    const data = await response.json();
+                    return data.data; // Extract the 'data' property from the response
+                } catch (error) {
+                    console.error(error);
+                    return null;
+                }
+            }
+
+            // Function to generate HTML for team details
+            function generateTeamDetailsHtml(team) {
+                return `
+                <div class="single-column">
+                    <div class="column-content">
+                        <h2>${team.tim}</h2>
+                        <p>${team.tempat_futsal}</p>
+                        <p> ${team.jam}</p>
+                        <p>Nomor HP: ${team.noHp}</p>
+                        <p>Captain Team ${team.nama}</p>
+                    </div>
+                </div>
+            `;
+            }
+
+            // Function to handle button
+            function handleTandingButtonClick(teamId) {
+                const isitandingUrl = `isitanding.html?id=${teamId}`;
+                window.location.href = isitandingUrl;
+            }
+
+            // Reference to the teamDetailsContainer
+            const teamDetailsContainer = document.getElementById(
+                "teamDetailsContainer"
+            );
+
+            // Get the teamId from the URL parameters
+            const urlSearchParams = new URLSearchParams(window.location.search);
+            const teamId = urlSearchParams.get("id");
+
+            // Fetch details of the specific team and generate HTML dynamically
+            fetchTeamDetails(teamId).then((team) => {
+                if (team) {
+                    const teamDetailsHtml = generateTeamDetailsHtml(team);
+                    teamDetailsContainer.innerHTML = teamDetailsHtml;
+
+                    // Attach the click event to the tanding button
+                    document
+                        .getElementById("tandingButton")
+                        .addEventListener("click", () =>
+                            handleTandingButtonClick(teamId)
+                        );
+                } else {
+                    teamDetailsContainer.innerHTML =
+                        "<p>Team details not found.</p>";
+                }
+            });
+        </script>
+    </body>
+</html>

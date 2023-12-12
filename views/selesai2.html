@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../public/styles/style.css" />
+        <title>TURNAMENT FUTSAL</title>
+    </head>
+
+    <body>
+        <main>
+            <div class="single-column">
+                <div class="column-content">
+                    <h2>PERTANDINGAN DITEMUKAN</h2>
+                </div>
+            </div>
+
+            <div class="single-column">
+                <div
+                    class="column-content"
+                    id="matchDetailsContainer"
+                    style="text-align: center"
+                >
+                    <!-- Informasi pertandingan akan dimuat di sini -->
+                </div>
+            </div>
+
+            <div class="button-container">
+                <a
+                    href="../index.html"
+                    class="button"
+                    style="margin-bottom: 90px"
+                    >SELESAI</a
+                >
+            </div>
+        </main>
+
+        <footer>
+            <p>Copyright 2023</p>
+        </footer>
+
+        <script>
+            // Fungsi untuk mendapatkan ID booking dari URL
+            function getBookingIdFromUrl() {
+                const urlSearchParams = new URLSearchParams(
+                    window.location.search
+                );
+                const bookingId = urlSearchParams.get("id");
+                return bookingId;
+            }
+
+            // Fungsi untuk mendapatkan data pertandingan dari server
+            async function fetchMatchDetails() {
+                const bookingId = getBookingIdFromUrl();
+
+                try {
+                    const response = await fetch(
+                        `http://localhost:5000/api/users/booking/${bookingId}`
+                    );
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `Error: ${response.status} - ${response.statusText}`
+                        );
+                    }
+
+                    const bookData = await response.json();
+
+                    console.log(bookData.data);
+
+                    // Menampilkan informasi pertandingan
+                    const matchDetailsContainer = document.getElementById(
+                        "matchDetailsContainer"
+                    );
+                    matchDetailsContainer.innerHTML = `
+                        <h2>${bookData.data.nama_tim}</h2>
+                        <h1>VS</h1>
+                        <h2>${bookData.data.tim_id.tim}</h2>
+                        <p>${bookData.data.tim_id.tempat_futsal}, ${bookData.data.tim_id.jam}</p>
+                        <p>ID Booking: ${bookingId}</p>
+                    `;
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            // Panggil fungsi untuk mengambil data pertandingan saat halaman dimuat
+            fetchMatchDetails();
+        </script>
+    </body>
+</html>

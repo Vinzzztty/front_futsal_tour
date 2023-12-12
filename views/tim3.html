@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="../public/styles/style.css" />
+        <title>TURNAMENT FUTSAL</title>
+    </head>
+
+    <body>
+        <h1>Cari Pertandingan</h1>
+        <main id="teamContainer">
+            <!-- Teams will be dynamically added here -->
+        </main>
+
+        <footer>
+            <p>Copyright 2023</p>
+        </footer>
+
+        <script>
+            // Function to fetch teams from the server
+            async function fetchTeams() {
+                try {
+                    const response = await fetch(
+                        "http://localhost:5000/api/tim/all"
+                    );
+                    if (!response.ok) {
+                        throw new Error(
+                            `Error: ${response.status} - ${response.statusText}`
+                        );
+                    }
+                    const data = await response.json();
+                    return data.data; // Extract the 'data' property from the response
+                } catch (error) {
+                    console.error(error);
+                    return [];
+                }
+            }
+
+            // Function to generate HTML for teams
+            function generateTeamHtml(team) {
+                return `
+                <div class="grid-item">
+                    <a href="#" id="${team._id}" onclick="handleTeamClick('${team._id}')">
+                        <h2>${team.tim}</h2>
+                    </a>
+                    <p>Tempat: ${team.tempat_futsal}</p>
+                    <p>Captain: ${team.nama}</p>
+                </div>
+            `;
+            }
+
+            // Function to generate HTML for team containers
+            function generateTeamContainerHtml(teamHtml) {
+                return `<div class="grid-container">${teamHtml}</div>`;
+            }
+
+            // Reference to the teamContainer
+            const teamContainer = document.getElementById("teamContainer");
+
+            // Function to handle team click
+            function handleTeamClick(teamId) {
+                // Construct the URL for the specific team's page
+                const teamPageUrl = `tanding2.html?id=${teamId}`;
+                // Navigate to the team's page
+                window.location.href = teamPageUrl;
+            }
+
+            // Fetch teams and generate HTML dynamically
+            fetchTeams().then((teams) => {
+                let teamHtml = "";
+                teams.forEach((team, index) => {
+                    teamHtml += generateTeamHtml(team);
+
+                    // Check if three items have been added, then create a new container
+                    if ((index + 1) % 3 === 0) {
+                        const teamContainerHtml =
+                            generateTeamContainerHtml(teamHtml);
+                        // Append the generated HTML to the teamContainer
+                        teamContainer.innerHTML += teamContainerHtml;
+                        // Reset teamHtml for the next set of three items
+                        teamHtml = "";
+                    }
+                });
+
+                // If there are remaining items (not a multiple of three), create the final container
+                if (teamHtml) {
+                    const teamContainerHtml =
+                        generateTeamContainerHtml(teamHtml);
+                    teamContainer.innerHTML += teamContainerHtml;
+                }
+            });
+        </script>
+    </body>
+</html>
