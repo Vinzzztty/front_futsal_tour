@@ -12,7 +12,7 @@
         <main>
             <form
                 id="daftar"
-                action="http://localhost:5000/api/users/register"
+                action="https://backend-futsal-tour-vinzzztty.vercel.app/api/users/register"
                 method="post"
             >
                 <label for="nama">NAMA</label>
@@ -65,7 +65,7 @@
                             tim: document.getElementById("tim").value,
                         };
                         const response = await fetch(
-                            "http://localhost:5000/api/users/register",
+                            "https://backend-futsal-tour-vinzzztty.vercel.app/api/users/register",
                             {
                                 method: "POST",
                                 headers: {

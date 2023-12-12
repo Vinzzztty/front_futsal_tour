@@ -22,7 +22,7 @@
             async function fetchTeams() {
                 try {
                     const response = await fetch(
-                        "http://localhost:5000/api/tim/all"
+                        "https://backend-futsal-tour-vinzzztty.vercel.app/api/tim/all"
                     );
                     if (!response.ok) {
                         throw new Error(
