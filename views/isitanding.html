@@ -11,7 +11,7 @@
         <h1 style="padding-top: 100px">Booking Pertandingan</h1>
         <main>
             <form
-                action="https://backend-futsal-tour-vinzzztty.vercel.app/api/users/booking"
+                action="https://backend-futsal-tour-2.vercel.app/api/users/booking"
                 method="post"
             >
                 <!-- Menambahkan input untuk menyimpan ID tim -->
@@ -49,7 +49,7 @@
                 try {
                     let tim_name = "";
                     const response = await fetch(
-                        `https://backend-futsal-tour-vinzzztty.vercel.app/api/tim/${teamId}`
+                        `https://backend-futsal-tour-2.vercel.app/api/tim/${teamId}`
                     );
                     if (!response.ok) {
                         throw new Error(
@@ -98,7 +98,7 @@
                         idTim: idFromURL,
                     };
                     const response = await fetch(
-                        "https://backend-futsal-tour-vinzzztty.vercel.app/api/users/booking",
+                        "https://backend-futsal-tour-2.vercel.app/api/users/booking",
                         {
                             method: "POST",
                             headers: {
